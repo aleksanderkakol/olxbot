@@ -1,6 +1,7 @@
 import os
 import codecs
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 import pyautogui
@@ -9,7 +10,8 @@ import pyautogui
 class OLX:
     def __init__(self):
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.browser = webdriver.Chrome(self.dir_path+'\\driver\\chromedriver.exe')
+        self.browser = webdriver.Chrome(ChromeDriverManager().install())
+        self.browser.maximize_window()
         self.browser.get('https://www.olx.pl/')
         self.browser.implicitly_wait(5)
 
@@ -24,6 +26,7 @@ class OLX:
         try:
             cookies = self.browser.find_element_by_class_name('cookie-close')
             cookies.click()
+            self.page_loading()
         except NoSuchElementException:
             print(NoSuchElementException)
             return False
@@ -32,7 +35,7 @@ class OLX:
     def enter_phone_number(self):
         try:
             number = self.browser.find_element_by_name('verification[phone]')
-            number.send_keys('123456789')                           #phone number
+            number.send_keys('123456789')
         except NoSuchElementException:
             print(NoSuchElementException)
             return False
@@ -40,9 +43,11 @@ class OLX:
 
     def new_advertisement(self):
         try:
-            add_advertisement = self.browser.find_element_by_id('postNewAdLink')
-            add_advertisement.click()
-            self.page_loading()
+            if self.page_loading():
+                sleep(2)
+                add_advertisement = self.browser.find_element_by_id('postNewAdLink')
+                add_advertisement.click()
+                self.page_loading()
         except NoSuchElementException:
             print(NoSuchElementException)
             return False
@@ -51,10 +56,11 @@ class OLX:
     def login(self):
         try:
             if self.page_loading():
+                sleep(3)
                 email = self.browser.find_element_by_id('userEmail')
                 password = self.browser.find_element_by_id('userPass')
-                email.send_keys('email@gmail.com')                  #login
-                password.send_keys('password123')                   #password
+                email.send_keys('william211@wp.pl')
+                password.send_keys('Mamalala11')
                 login = self.browser.find_element_by_id('se_userLogin')
                 login.click()
                 self.page_loading()
@@ -66,19 +72,19 @@ class OLX:
     def add_advertisement(self):
         try:
             if self.page_loading():
-                self.title("Advertisement Title")                   #title
+                self.title("Wynajem Kwater")
                 self.category()
                 self.icon()
                 self.data_category()
-                self.price("999")                                   #price
+                self.price("35")
                 self.room_type()
                 self.number_of_people()
                 self.business_type()
                 self.description()
                 self.photos()
                 self.location()
-                self.phone_number("123 456 789")                    #contact phone number
-                self.submit()
+                self.phone_number("516 193 616")
+                # self.submit()
                 self.page_loading()
         except Exception as ex:
             print(ex)
@@ -201,7 +207,7 @@ class OLX:
         try:
             location = self.browser.find_element_by_id('mapAddress')
             location.clear()
-            location.send_keys('Gdańsk, Pomorskie')                     #location
+            location.send_keys('Krynica Morska, nowodworski, Pomorskie')
             self.browser.implicitly_wait(5)
             city = self.browser.find_element_by_class_name('geo-suggest-li')
             city.click()
